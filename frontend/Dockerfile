@@ -1,13 +1,21 @@
 # Frontend Dockerfile
 FROM node:18-alpine AS base
 
+# Install dependencies required for native modules in Alpine
+RUN apk add --no-cache libc6-compat python3 make g++
+
 # Install dependencies only when needed
 FROM base AS deps
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* ./
-RUN npm ci --only=production
+
+# Install all dependencies (including devDependencies for build)
+RUN npm ci
+
+# Rebuild native modules to ensure correct binaries for Alpine
+RUN npm rebuild
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -22,7 +30,7 @@ RUN npm run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
@@ -37,6 +45,6 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
+ENV PORT=3000
 
 CMD ["node", "server.js"]

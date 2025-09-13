@@ -12,10 +12,9 @@ load_dotenv()
 app = FastAPI(title="ElevenLabs Clone API", version="1.0.0")
 
 # CORS configuration
-# In main.py, update CORS to allow all origins during development:
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=["http://localhost:3000", "https://your-vercel-domain.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -48,28 +47,35 @@ SAMPLE_AUDIO_DATA = [
     {
         "id": "english_audio",
         "language": "english",
-        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",
+        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-05.wav",  # Replace with your actual audio URLs
         "text_content": "In the ancient land of Eldoria, where skies shimmered and forests, whispered secrets to the wind, lived a dragon named Zephyros. [sarcastically] Not the \"burn it all down\" kind... [giggles] but he was gentle, wise, with eyes like old stars. [whispers] Even the birds fell silent when he passed."
     },
     {
-        "id": "arabic_audio", 
+        "id": "arabic_audio",
         "language": "arabic",
-        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-04.wav",
+        "audio_url": "https://www.soundjay.com/misc/sounds/bell-ringing-04.wav",  # Replace with your actual Arabic audio URLs
         "text_content": "في أرض إلدوريا القديمة، حيث تتألق السماء وتهمس الغابات بأسرارها للريح، عاش تنين يُدعى زيفيروس. ليس من النوع الذي يحرق كل شيء... بل كان لطيفاً وحكيماً، بعيون مثل النجوم القديمة. حتى الطيور كانت تصمت عندما يمر."
     }
 ]
 
 @app.on_event("startup")
 async def startup_event():
-    # Comment out MongoDB connection for now
-    print("API started successfully")
-    
-# Use in-memory storage for development:
-audio_storage = SAMPLE_AUDIO_DATA.copy()
+    """Initialize database with sample data if empty"""
+    try:
+        # Check if collection exists and has data
+        count = await collection.count_documents({})
+        if count == 0:
+            # Insert sample data
+            await collection.insert_many(SAMPLE_AUDIO_DATA)
+            print("Sample audio data inserted into database")
+        else:
+            print(f"Database already contains {count} audio files")
+    except Exception as e:
+        print(f"Error during startup: {e}")
 
-@app.get("/api/audio")
-async def get_all_audio():
-    return [AudioFile(**item) for item in audio_storage]
+@app.get("/")
+async def root():
+    return {"message": "ElevenLabs Clone API", "version": "1.0.0"}
 
 @app.get("/api/audio", response_model=List[AudioFile])
 async def get_all_audio():

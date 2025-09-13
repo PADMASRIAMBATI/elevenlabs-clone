@@ -307,8 +307,7 @@ export default function Home() {
               {/* Controls */}
               <div className="controls">
                 <div className="select">
-                  <div
-                    className="select-trigger"
+                  <div className="select-trigger"
                     onClick={() => !isLoading && setIsSelectOpen(!isSelectOpen)}
                     role="button"
                     tabIndex={0}
@@ -330,13 +329,14 @@ export default function Home() {
                   </div>
                   <div className={`select-content ${isSelectOpen ? 'open' : ''}`} role="listbox">
                     {languages.map((language) => (
-                      <button
-                        key={language.code}
+                      <button key={language.code}
                         className="select-item"
                         onClick={() => handleLanguageChange(language.code)}
                         role="option"
                         aria-selected={language.code === selectedLanguage}
-                        disabled={isLoading}
+                        title={`Select ${language.name}`}
+                        aria-label={`Select ${language.name}`}
+                        disabled={isLoading} 
                       >
                         <span className="flag">{language.flag}</span>
                         <span>{language.name}</span>

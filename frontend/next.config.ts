@@ -1,14 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Add this line to enable the standalone output mode
+  output: 'standalone',
+
   async rewrites() {
     return [
       {
         source: '/api/:path*',
         destination: 'http://localhost:8000/api/:path*',
       },
-    ]
+    ];
   },
-  output: 'standalone', // Add this for production builds
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
