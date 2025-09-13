@@ -36,7 +36,7 @@ const languages = [
 
 // API Configuration
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://your-backend-url.herokuapp.com'  // Replace with your deployed backend URL
+  ? 'https://elevenlabs-backend-9srp.onrender.com'  // Replace with your deployed backend URL
   : 'http://localhost:8000'
 
 export default function Home() {

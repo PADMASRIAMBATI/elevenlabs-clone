@@ -1,6 +1,6 @@
-version: '3.8'
+ version: '3.8'
 
-services:
+ services:
   mongodb:
     image: mongo:7.0
     container_name: elevenlabs_mongodb
@@ -53,9 +53,9 @@ services:
       - /app/node_modules
       - /app/.next
 
-volumes:
+ volumes:
   mongodb_data:
 
-networks:
+ networks:
   elevenlabs_network:
     driver: bridge
